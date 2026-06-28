@@ -2,26 +2,14 @@ import { View, Text, StyleSheet, Alert } from 'react-native';
 import InputForm from '../../../components/InputForm';
 import { useState } from 'react';
 import Button from '../../../components/Button';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList, ROUTES } from '../../../routes';
 import { COLORS } from '../../../constant/color';
 import { useLoginMutation } from '../hooks/loginMutation';
-import { useAuth } from '../../../context/AuthContext';
-
-type LoginScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  typeof ROUTES.LOGIN
->;
 
 const LoginForm = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const { mutate: login, isPending } = useLoginMutation();
-  const navigation = useNavigation() as LoginScreenNavigationProp;
-
-  const { setToken } = useAuth();
 
   const handleLogin = () => {
     setErrorMsg('');
@@ -29,13 +17,11 @@ const LoginForm = () => {
       setErrorMsg('Nomor HP dan password harus diisi');
       return;
     }
+    // Penyimpanan context (token/role/profile) & navigasi ke PIN
+    // ditangani oleh useLoginMutation — di sini cuma handle error.
     login(
       { phone, password },
       {
-        onSuccess: res => {
-          navigation.navigate(ROUTES.PIN, { token: res.data.token });
-          setToken(res.data.token);
-        },
         onError: err => {
           Alert.alert('Login Gagal', err.message);
           setErrorMsg(err.message);
@@ -75,7 +61,6 @@ const LoginForm = () => {
         title="Login"
         disabled={isPending}
         onPress={handleLogin}
-        // onPress={() => navigation.navigate(ROUTES.PIN)}
         bgColor={COLORS.brand}
         textColor={COLORS.white}
         widthRatio={0.83}

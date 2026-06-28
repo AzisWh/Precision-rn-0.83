@@ -1,12 +1,30 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../../../constant/color';
+import Button from '../../../components/Button';
+import useLogout from '../../../features/settings/hooks/logoutHooks';
 
-const PicHomeScreen = () => (
-  <View style={styles.container}>
-    <Text style={styles.text}>PIC Home</Text>
-  </View>
-);
+const PicHomeScreen = () => {
+  const { handleLogout, isPending } = useLogout();
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>PIC Home</Text>
+      <Button
+        title={isPending ? 'Keluar...' : 'Keluar'}
+        onPress={handleLogout}
+        disabled={isPending}
+        bgColor={COLORS.error ?? '#EF4444'}
+        widthRatio={0.88}
+        height={52}
+        borderRadius={10}
+        fontSize={16}
+        rightIcon="log-out-outline"
+        iconFamily="Ionicons"
+      />
+    </View>
+  );
+};
 
 export default PicHomeScreen;
 
@@ -16,6 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.white,
+    gap: 32,
   },
   text: {
     fontSize: 18,

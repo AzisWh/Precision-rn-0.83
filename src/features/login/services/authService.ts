@@ -27,9 +27,14 @@ export const loginApi = async (req: LoginRequest): Promise<LoginResponse> => {
     .eq('id', authData.user.id)
     .single();
 
+  console.log('[loginApi] auth user id:', authData.user.id);
+  console.log('[loginApi] profile data:', data);
+  console.log('[loginApi] profile error:', profileError);
+
   const profile = data as UserTableRow | null;
 
   if (profileError || !profile) {
+    // detail error tetap di console (devtools), user hanya lihat pesan bersih
     await supabase.auth.signOut();
     throw { status: 403, message: 'Profil pengguna tidak ditemukan' };
   }

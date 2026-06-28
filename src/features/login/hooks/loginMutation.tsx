@@ -16,6 +16,13 @@ export const useLoginMutation = () => {
     mutationFn: loginApi,
     onSuccess: response => {
       const { token, role, phone, full_name } = response.data;
+      console.log('[login] data diterima dari server:', {
+        phone,
+        role,
+        full_name,
+        token,
+      });
+      console.log('[login] simpan role ke context & lanjut ke PIN:', role);
 
       setToken(token);
       setRole(role);
