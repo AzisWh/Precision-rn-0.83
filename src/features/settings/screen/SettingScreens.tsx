@@ -1,10 +1,20 @@
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, Text } from 'react-native';
 import Button from '../../../components/Button';
 import { COLORS } from '../../../constant/color';
 import useLogout from '../hooks/logoutHooks';
+import { useMyProfile } from '../../../shared/hooks/profileHooks';
+import { LoadingState } from '../../../components/StateComponents';
 
 const SettingScreens = () => {
   const { handleLogout, isPending } = useLogout();
+  const { data, isLoading, isError, error } = useMyProfile();
+
+  if (isLoading) return <LoadingState message="Loading profile..." />;
+  if (isError) return <Text>{error.message}</Text>;
+
+  const profile = data?.data;
+
+  console.log('Profile data:', profile);
 
   return (
     <View style={styles.container}>

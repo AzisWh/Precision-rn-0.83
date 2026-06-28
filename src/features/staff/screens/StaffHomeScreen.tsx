@@ -3,9 +3,19 @@ import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../../../constant/color';
 import Button from '../../../components/Button';
 import useLogout from '../../../features/settings/hooks/logoutHooks';
+import { LoadingState } from '../../../components/StateComponents';
+import { useMyProfile } from '../../../shared/hooks/profileHooks';
 
 const StaffHomeScreen = () => {
   const { handleLogout, isPending } = useLogout();
+  const { data, isLoading, isError, error } = useMyProfile();
+  
+    if (isLoading) return <LoadingState message="Loading profile..." />;
+    if (isError) return <Text>{error.message}</Text>;
+  
+    const profile = data?.data;
+  
+    console.log('Profile data:', profile);
 
   return (
     <View style={styles.container}>

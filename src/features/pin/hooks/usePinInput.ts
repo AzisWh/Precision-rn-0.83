@@ -70,9 +70,9 @@ const usePinInput = () => {
     if (pin.length >= PIN_LENGTH) return;
 
     ReactNativeHapticFeedback.trigger('impactLight', hapticOptions);
-    console.log(
-      `PIN press: "${value}" — PIN sekarang: ${[...pin, value].join('')}`,
-    );
+    // console.log(
+    //   `PIN press: "${value}" — PIN sekarang: ${[...pin, value].join('')}`,
+    // );
 
     const newPin = [...pin, value];
     setPin(newPin);
@@ -83,7 +83,7 @@ const usePinInput = () => {
     if (pin.length === 0) return;
 
     ReactNativeHapticFeedback.trigger('impactLight', hapticOptions);
-    console.log(`Backspace — PIN sekarang: ${pin.slice(0, -1).join('')}`);
+    // console.log(`Backspace — PIN sekarang: ${pin.slice(0, -1).join('')}`);
 
     animateDotOut(pin.length - 1);
     setPin(prev => prev.slice(0, -1));

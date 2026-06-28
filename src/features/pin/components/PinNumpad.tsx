@@ -135,7 +135,7 @@ const PinNumpad = () => {
     );
   };
 
-  console.log('auth state:', auth);
+  // console.log('auth state:', auth);
 
   const handleLanjutkan = () => {
     if (!isFull) return;
