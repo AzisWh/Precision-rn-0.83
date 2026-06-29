@@ -1,4 +1,5 @@
 import { supabase } from "../../../lib/supabase";
+import { DELIVERY_SELECT_QUERY } from "../../../shared/service/query";
 import { ApiError, ApiResponse } from "../../../type/api";
 import { DeliveryNote } from "../type";
 
@@ -16,20 +17,7 @@ import { DeliveryNote } from "../type";
 export const getDeliveryDetail = async (id: string): Promise<ApiResponse<DeliveryNote>> => {
   const { data, error } = await supabase
   .from('delivery_table')
-  .select(`
-    *,
-    driver:user_table!delivery_table_driver_id_fkey(
-      id,
-      full_name,
-      phone,
-      detail:drivers!drivers_user_id_fkey(
-        vehicle_type,
-        driver_lat,
-        driver_lng,
-        last_location_update
-      )
-    )
-  `)
+  .select(DELIVERY_SELECT_QUERY)
   .eq('id', id)
   .single();
 

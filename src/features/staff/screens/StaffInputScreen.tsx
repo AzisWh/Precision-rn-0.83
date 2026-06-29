@@ -12,13 +12,13 @@ import DeliveryForm from '../components/DeliveryForm';
 import { NewDeliveryInput } from '../type';
 
 const StaffInputScreen = () => {
-  const handleSubmit = (data: NewDeliveryInput) => {
-    console.log('📝 [SIMULASI] new delivery payload:', data);
-    Alert.alert(
-      'Berhasil (simulasi)',
-      `DN ${data.dn_code} dibuat dengan status ${data.status}.`,
-    );
-  };
+  // const handleSubmit = (data: NewDeliveryInput) => {
+  //   console.log('[SIMULASI] new delivery payload:', data);
+  //   Alert.alert(
+  //     'Berhasil (simulasi)',
+  //     `DN ${data.dn_code} dibuat dengan status ${data.status}.`,
+  //   );
+  // };
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
@@ -30,7 +30,7 @@ const StaffInputScreen = () => {
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
         >
-          <DeliveryForm onSubmit={handleSubmit} />
+          <DeliveryForm />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

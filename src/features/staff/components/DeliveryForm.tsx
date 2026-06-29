@@ -17,6 +17,11 @@ import LocationPickerModal from './LocationPickerModal';
 import { DriverOption, NewDeliveryInput } from '../type';
 import { DeliveryType } from '../../delivery-detail/type';
 import { useDriverList } from '../../../shared/hooks/driverListMutation';
+import { useNavigation } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { StaffTabParamList } from '../../../routes';
+import { useCreateDeliveryMutation } from '../hooks/insertDeliveryHooks';
+import { ApiError } from '../../../type/api';
 
 const DUMMY_DRIVERS: DriverOption[] = [
   {
@@ -54,11 +59,14 @@ type DeliveryFormProps = {
   onSubmit: (data: NewDeliveryInput) => void;
 };
 
-const DeliveryForm = ({ onSubmit }: DeliveryFormProps) => {
+const DeliveryForm = () => {
   const { drivers, isLoading: loadingDrivers } = useDriverList();
+  const { mutateAsync: createDelivery, isPending: isSubmitting } =
+    useCreateDeliveryMutation();
+  const navigation =
+    useNavigation<BottomTabNavigationProp<StaffTabParamList>>();
 
   console.log('Driver List:', drivers);
-  
 
   const [dnCode, setDnCode] = useState('');
   const [routeFrom, setRouteFrom] = useState('');
@@ -75,9 +83,44 @@ const DeliveryForm = ({ onSubmit }: DeliveryFormProps) => {
     null,
   );
 
-  const selectedDriver = DUMMY_DRIVERS.find(d => d.id === driverId);
+  const selectedDriver = drivers.find(driver => driver.id === driverId) || null;
 
-  const handleSubmit = () => {
+  // const handleSubmit = () => {
+  //   if (
+  //     !dnCode.trim() ||
+  //     !routeFrom.trim() ||
+  //     !routeTo.trim() ||
+  //     !recipient.trim() ||
+  //     !driverId ||
+  //     !origin ||
+  //     !destination
+  //   ) {
+  //     Alert.alert(
+  //       'Data belum lengkap',
+  //       'Isi DN code, rute, penerima, pilih driver, dan tentukan lokasi origin & destination.',
+  //     );
+  //     return;
+  //   }
+
+  //   const payload: NewDeliveryInput = {
+  //     dn_code: dnCode.trim(),
+  //     status: 'pending',
+  //     route_from: routeFrom.trim(),
+  //     route_to: routeTo.trim(),
+  //     recipient: recipient.trim(),
+  //     signed_by: signedBy.trim() || null,
+  //     delivery_type: deliveryType,
+  //     driver_id: driverId,
+  //     origin_lat: origin.latitude,
+  //     origin_lng: origin.longitude,
+  //     dest_lat: destination.latitude,
+  //     dest_lng: destination.longitude,
+  //   };
+
+  //   onSubmit(payload);
+  // };
+
+  const handleSubmit = async () => {
     if (
       !dnCode.trim() ||
       !routeFrom.trim() ||
@@ -109,7 +152,20 @@ const DeliveryForm = ({ onSubmit }: DeliveryFormProps) => {
       dest_lng: destination.longitude,
     };
 
-    onSubmit(payload);
+    console.log('[DeliveryForm] payload:', payload);
+
+    try {
+      await createDelivery(payload);
+      Alert.alert('Berhasil', `Delivery ${payload.dn_code} berhasil dibuat.`, [
+        { text: 'OK', onPress: () => navigation.navigate('StaffHome') },
+      ]);
+    } catch (e) {
+      const err = e as ApiError;
+      Alert.alert(
+        'Gagal menambah delivery',
+        err.message ?? 'Terjadi kesalahan',
+      );
+    }
   };
 
   const handleConfirmLocation = (coord: LatLng) => {
@@ -250,13 +306,12 @@ const DeliveryForm = ({ onSubmit }: DeliveryFormProps) => {
 
       <View style={styles.submitWrap}>
         <Button
-          title="Tambah Delivery"
+          title={isSubmitting ? 'Menyimpan...' : 'Tambah Delivery'}
           onPress={handleSubmit}
           rightIcon="checkcircleo"
         />
       </View>
 
-      {/* Driver picker sheet */}
       <DriverPickerSheet
         visible={driverSheetOpen}
         drivers={drivers}
@@ -268,7 +323,6 @@ const DeliveryForm = ({ onSubmit }: DeliveryFormProps) => {
         onClose={() => setDriverSheetOpen(false)}
       />
 
-      {/* Map picker — dipakai untuk origin & destination */}
       <LocationPickerModal
         visible={locationPicker !== null}
         title={
