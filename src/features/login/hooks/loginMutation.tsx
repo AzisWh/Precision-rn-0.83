@@ -6,15 +6,17 @@ import { ROUTES, RootStackParamList } from '../../../routes';
 import { ApiError } from '../../../type/api';
 import { LoginRequest, LoginResponse } from '../type/login';
 import { loginApi } from '../services/authService';
+import { supabase } from '../../../lib/supabase';
 
 export const useLoginMutation = () => {
   const { setToken, setRole, setProfile } = useAuth();
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return useMutation<LoginResponse, ApiError, LoginRequest>({
     mutationFn: loginApi,
-    onSuccess: response => {
+    onSuccess: async response => {
       const { token, role, phone, full_name } = response.data;
       console.log('[login] data diterima dari server:', {
         phone,
@@ -24,11 +26,14 @@ export const useLoginMutation = () => {
       });
       console.log('[login] simpan role ke context & lanjut ke PIN:', role);
 
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       setToken(token);
       setRole(role);
       setProfile({
-        // id user bisa diambil dari token/JWT bila nanti diperlukan
-        id: '',
+        id: user?.id ?? '',
         phone,
         full_name,
         role,

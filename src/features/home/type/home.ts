@@ -3,15 +3,29 @@ export type HomeScreenParams = {
   userName: string;
 };
 
-export type Driver = {
-  id: string;
-  name: string;
-  phone: string | null;
+export type DriverDetail = {
   vehicle_type: string | null;
   driver_lat: number | null;
   driver_lng: number | null;
   last_location_update: string | null;
 };
+
+export type Driver = {
+  id: string;
+  full_name: string;
+  phone: string | null;
+  detail: DriverDetail | null;
+};
+
+// export type Driver = {
+//   id: string;
+//   name: string;
+//   phone: string | null;
+//   vehicle_type: string | null;
+//   driver_lat: number | null;
+//   driver_lng: number | null;
+//   last_location_update: string | null;
+// };
 
 export type DeliveryType = 'document' | 'vehicle' | 'package' | 'standard';
 

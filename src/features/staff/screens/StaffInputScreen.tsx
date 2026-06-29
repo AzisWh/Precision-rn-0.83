@@ -1,28 +1,39 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../../constant/color';
-import Button from '../../../components/Button';
-import useLogout from '../../../features/settings/hooks/logoutHooks';
+import DeliveryForm from '../components/DeliveryForm';
+import { NewDeliveryInput } from '../type';
 
 const StaffInputScreen = () => {
-  const { handleLogout, isPending } = useLogout();
+  const handleSubmit = (data: NewDeliveryInput) => {
+    console.log('📝 [SIMULASI] new delivery payload:', data);
+    Alert.alert(
+      'Berhasil (simulasi)',
+      `DN ${data.dn_code} dibuat dengan status ${data.status}.`,
+    );
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Staff Input</Text>
-      <Button
-        title={isPending ? 'Keluar...' : 'Keluar'}
-        onPress={handleLogout}
-        disabled={isPending}
-        bgColor={COLORS.error ?? '#EF4444'}
-        widthRatio={0.88}
-        height={52}
-        borderRadius={10}
-        fontSize={16}
-        rightIcon="log-out-outline"
-        iconFamily="Ionicons"
-      />
-    </View>
+    <SafeAreaView edges={['bottom']} style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+        >
+          <DeliveryForm onSubmit={handleSubmit} />
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -31,14 +42,12 @@ export default StaffInputScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: COLORS.white,
-    gap: 32,
   },
-  text: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: COLORS.black,
+  flex: {
+    flex: 1,
+  },
+  scroll: {
+    padding: 16,
   },
 });

@@ -35,7 +35,7 @@ const getTabConfig = (routeName: string) => {
       };
     case 'StaffInput':
       return {
-        label: 'INPUT',
+        label: 'ADD DN',
         icon: (color: string, size: number) => (
           <MaterialCommunityIcons
             name="plus-circle"
@@ -92,7 +92,9 @@ const CustomTabBar = ({ state, navigation }: any) => {
               style={[styles.tabContent, isFocused && styles.tabContentActive]}
             >
               {icon(iconColor, iconSize)}
-              <Text style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
+              <Text
+                style={[styles.tabLabel, isFocused && styles.tabLabelActive]}
+              >
                 {label}
               </Text>
             </View>

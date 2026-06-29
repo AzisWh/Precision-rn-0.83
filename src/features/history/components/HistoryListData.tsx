@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ROUTES, RootStackParamList } from '../../../routes';
 import useHistoryTable from '../hooks/historyHooks';
-import CardListData from '../../home/components/CardListData';
+import CardListData from '../../../components/CardListData';
 import ImageCard from '../../../components/ImageCard';
 import { COLORS } from '../../../constant/color';
 import HistoryListCard from './HistoryListCard';

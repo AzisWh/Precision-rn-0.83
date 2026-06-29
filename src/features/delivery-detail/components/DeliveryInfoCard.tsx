@@ -157,11 +157,11 @@ const DriverSection = ({ driver }: { driver: Driver | null }) => {
         />
         <Text style={styles.sectionHeaderText}>DRIVER</Text>
       </View>
-      <Row label="Name" value={driver.name} />
+      <Row label="Name" value={driver.full_name} />
       <Row label="Phone" value={driver.phone} />
       <DateRow
         label="Last update"
-        value={formatDateTime(driver.last_location_update)}
+        value={formatDateTime(driver.detail?.last_location_update)}
       />
     </View>
   );

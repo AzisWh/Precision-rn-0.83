@@ -18,8 +18,8 @@ export const getMyProfile = async (): Promise<ApiResponse<UserProfile>> => {
   const { data, error } = await supabase
     .from('user_table')
     .select('id, phone, full_name, role, is_active')
-    .eq('id', user.id)       
-    .single();               
+    .eq('id', user.id)
+    .single();
 
   if (error || !data) {
     console.log('❌ getMyProfile error:', error?.message);

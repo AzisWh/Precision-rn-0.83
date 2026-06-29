@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { COLORS } from '../../../constant/color';
+import { ROUTES, RootStackParamList } from '../../../routes';
 import { UserRole } from '../../login/type/auth';
 import { useMyProfile } from '../../../shared/hooks/profileHooks';
 import { ErrorState, LoadingState } from '../../../components/StateComponents';
@@ -38,6 +41,8 @@ const InfoRow = ({ icon, label, value }: RowProps) => (
 
 const ProfileScreen = () => {
   const { data, isLoading, isError } = useMyProfile();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   if (isLoading) {
     return <LoadingState message="Memuat profil..." />;
@@ -59,6 +64,13 @@ const ProfileScreen = () => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.card}>
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => navigation.navigate(ROUTES.EDIT_PROFILE)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <MaterialIcons name="edit" size={20} color={COLORS.brand} />
+        </TouchableOpacity>
         <View style={styles.header}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{initials}</Text>
@@ -105,6 +117,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  editBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 1,
   },
   header: {
     alignItems: 'center',

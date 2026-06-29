@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ROUTES, RootStackParamList } from '../../../routes';
 
-import CardListData from './CardListData';
+import CardListData from '../../../components/CardListData';
 import useDeliveryTable from '../hooks/useDeliveryHooks';
 import ImageCard from '../../../components/ImageCard';
 import { COLORS } from '../../../constant/color';

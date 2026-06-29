@@ -25,6 +25,8 @@ const DeliveryDetailsScreen = ({ route, navigation }: Props) => {
 
   const data = deliveryDetail ?? item;
 
+  console.log('Delivery Detail Data:', data);
+
   if (isLoading) return <LoadingState />;
 
   return (

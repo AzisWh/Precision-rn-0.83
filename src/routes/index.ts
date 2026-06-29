@@ -9,8 +9,9 @@ export const ROUTES = {
   DRIVER_TAB: 'DriverTab',
   PIC_TAB: 'PicTab',
   SECURITY_TAB: 'SecurityTab',
-  // 
+  //
   DN_DETAIL: 'DNDetail',
+  EDIT_PROFILE: 'EditProfile',
 } as const;
 
 export type RootStackParamList = {
@@ -22,6 +23,7 @@ export type RootStackParamList = {
   [ROUTES.PIC_TAB]: undefined;
   [ROUTES.SECURITY_TAB]: undefined;
   [ROUTES.DN_DETAIL]: { item: DeliveryNote };
+  [ROUTES.EDIT_PROFILE]: undefined;
 };
 
 export type AdminTabParamList = {
