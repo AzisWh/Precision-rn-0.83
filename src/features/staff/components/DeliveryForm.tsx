@@ -120,6 +120,20 @@ const DeliveryForm = () => {
   //   onSubmit(payload);
   // };
 
+  const resetForm = () => {
+    setDnCode('');
+    setRouteFrom('');
+    setRouteTo('');
+    setRecipient('');
+    setSignedBy('');
+    setDeliveryType('package');
+    setDriverId('');
+    setOrigin(null);
+    setDestination(null);
+    setDriverSheetOpen(false);
+    setLocationPicker(null);
+  };
+
   const handleSubmit = async () => {
     if (
       !dnCode.trim() ||
@@ -156,6 +170,7 @@ const DeliveryForm = () => {
 
     try {
       await createDelivery(payload);
+      resetForm();
       Alert.alert('Berhasil', `Delivery ${payload.dn_code} berhasil dibuat.`, [
         { text: 'OK', onPress: () => navigation.navigate('StaffHome') },
       ]);

@@ -12,6 +12,7 @@ export const ROUTES = {
   //
   DN_DETAIL: 'DNDetail',
   EDIT_PROFILE: 'EditProfile',
+  EDIT_DELIVERY: 'EditDelivery',
 } as const;
 
 export type RootStackParamList = {
@@ -24,6 +25,7 @@ export type RootStackParamList = {
   [ROUTES.SECURITY_TAB]: undefined;
   [ROUTES.DN_DETAIL]: { item: DeliveryNote };
   [ROUTES.EDIT_PROFILE]: undefined;
+  [ROUTES.EDIT_DELIVERY]: { item: DeliveryNote };
 };
 
 export type AdminTabParamList = {

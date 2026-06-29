@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Marker, LatLng } from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../../../constant/color';
@@ -35,6 +29,7 @@ const LocationPickerModal = ({
   onClose,
   onConfirm,
 }: LocationPickerModalProps) => {
+  const insets = useSafeAreaInsets();
   const [coord, setCoord] = useState<LatLng>(initial ?? DEFAULT_COORD);
 
   // Reset ke posisi awal tiap kali picker dibuka
@@ -45,12 +40,13 @@ const LocationPickerModal = ({
   }, [visible, initial]);
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      <SafeAreaView edges={['top']} style={styles.container}>
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
+      <View
+        style={[
+          styles.container,
+          { paddingTop: insets.top, paddingBottom: insets.bottom },
+        ]}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             onPress={onClose}
@@ -97,7 +93,7 @@ const LocationPickerModal = ({
             Geser pin untuk menentukan titik lokasi.
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 };

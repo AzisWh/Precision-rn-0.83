@@ -12,6 +12,7 @@ import DriverTabNavigator from './tabs/DriverTabNavigator';
 import PicTabNavigator from './tabs/PicTabNavigator';
 import SecurityTabNavigator from './tabs/SecurityTabNavigator';
 import DeliveryDetailsScreen from '../../features/delivery-detail/screen/DeliveryDetailsScreen';
+import EditDeliveryScreen from '../../features/delivery-detail/screen/EditDeliveryScreen';
 import EditProfileScreen from '../../features/settings/screen/EditProfileScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,6 +41,10 @@ export default function RootNavigator() {
         <Stack.Screen name={ROUTES.PIC_TAB} component={PicTabNavigator} />
         <Stack.Screen name={ROUTES.SECURITY_TAB} component={SecurityTabNavigator} />
         <Stack.Screen name={ROUTES.DN_DETAIL} component={DeliveryDetailsScreen} />
+        <Stack.Screen
+          name={ROUTES.EDIT_DELIVERY}
+          component={EditDeliveryScreen}
+        />
         <Stack.Screen name={ROUTES.EDIT_PROFILE} component={EditProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
