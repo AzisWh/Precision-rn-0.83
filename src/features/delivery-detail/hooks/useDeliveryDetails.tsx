@@ -10,6 +10,7 @@ import {
   useUpdateDeliveryStatusMutation,
   useUpdateStatusBySecurity,
   useRejectRequestMutation,
+  useCompleteRequestMutation,
 } from './updateStatusHooks';
 import { useDeleteDeliveryMutation } from './editDeliveryHooks';
 
@@ -22,7 +23,7 @@ type Options = {
 
 const useDeliveryDetails = ({ item, navigation }: Options) => {
   const { auth } = useAuth();
-  const { isStaff, isDriver, isSecurity } = useRole();
+  const { isStaff, isDriver, isSecurity, isPic } = useRole();
   const { deliveryDetail, isLoading } = useDeliveryDetail(item.id);
   const data = deliveryDetail ?? item;
 
@@ -31,6 +32,7 @@ const useDeliveryDetails = ({ item, navigation }: Options) => {
     isDriver && data.driver_id !== null && data.status === 'pending';
   const securityMutate = isSecurity && data.status === 'in_transit';
   const rejectMutate = isSecurity && data.status === 'arrived';
+  const completeMutate = isPic && data.status === 'arrived';
 
   const driverId = auth.profile?.id ?? '';
   const rejectBy = auth.profile?.full_name ?? '';
@@ -40,11 +42,38 @@ const useDeliveryDetails = ({ item, navigation }: Options) => {
     useUpdateStatusBySecurity(driverId);
   const { mutate: rejectDelivery, isPending: isRejectPending } =
     useRejectRequestMutation(driverId);
+  const { mutate: completeDelivery, isPending: isCompletePending } =
+    useCompleteRequestMutation(driverId);
   const { mutate: deleteMutate } = useDeleteDeliveryMutation();
 
-  // State bottom sheet reject
   const [isRejectSheetVisible, setIsRejectSheetVisible] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+
+  const handleComplete = () =>
+    Alert.alert(
+      'Konfirmasi',
+      `Yakin mau Menyelesaikan pengiriman DN ${data.dn_code}?`,
+      [
+        { text: 'Batal', style: 'cancel' },
+        {
+          text: 'Konfirmasi',
+          style: 'destructive',
+          onPress: () =>
+            completeDelivery(
+              { id: data.id, status: 'completed' },
+              {
+                onSuccess: () => navigation.goBack(),
+                onError: err =>
+                  Alert.alert(
+                    'Gagal update status',
+                    err.message ?? 'Terjadi kesalahan',
+                  ),
+              },
+            ),
+        },
+      ],
+      { cancelable: true },
+    );
 
   const handleUpdate = () =>
     Alert.alert(
@@ -116,7 +145,12 @@ const useDeliveryDetails = ({ item, navigation }: Options) => {
     }
 
     rejectDelivery(
-      { id: data.id, reject_reason: reason, reject_by: rejectBy, status: 'rejected' },
+      {
+        id: data.id,
+        reject_reason: reason,
+        reject_by: rejectBy,
+        status: 'rejected',
+      },
       {
         onSuccess: () => {
           setIsRejectSheetVisible(false);
@@ -127,10 +161,7 @@ const useDeliveryDetails = ({ item, navigation }: Options) => {
           );
         },
         onError: err =>
-          Alert.alert(
-            'Gagal reject',
-            err.message ?? 'Terjadi kesalahan',
-          ),
+          Alert.alert('Gagal reject', err.message ?? 'Terjadi kesalahan'),
       },
     );
   };
@@ -182,6 +213,9 @@ const useDeliveryDetails = ({ item, navigation }: Options) => {
     handleDelete,
     handleUpdate,
     handleUpdateBySecurity,
+    completeMutate,
+    handleComplete,
+    isCompletePending,
   };
 };
 

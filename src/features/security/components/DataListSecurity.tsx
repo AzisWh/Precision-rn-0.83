@@ -1,7 +1,10 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, ROUTES } from '../../../routes';
 import useRefresh from '../../../shared/hooks/useRefresh';
-import useDeliveryTable from '../../home/hooks/useDeliveryHooks';
+import {
+  useDeliverySecurityCounts,
+  useDeliverySecurityList,
+} from '../hooks/useDeliverySecurity';
 import { useMemo, useState } from 'react';
 import { DeliveryNote } from '../../delivery-detail/type';
 import {
@@ -46,39 +49,76 @@ const TABS: TabConfig[] = [
 ];
 
 const DataListSecurity = () => {
+  const [activeTab, setActiveTab] = useState<TabKey>(TABS[0].key);
+  const activeConfig = TABS.find(t => t.key === activeTab) ?? TABS[0];
+
   const {
-    deliveryNotes: deliveries,
+    deliveries,
     isLoading,
     isError,
     refetch,
-  } = useDeliveryTable({ includeCompleted: true });
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useDeliverySecurityList(activeTab, activeConfig.statuses);
+  const { counts } = useDeliverySecurityCounts();
+
   const { refreshControl } = useRefresh(async () => {
     await refetch();
   });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [activeTab, setActiveTab] = useState<TabKey>(TABS[0].key);
 
-  const counts = useMemo(() => {
-    const map: Record<TabKey, number> = { berjalan: 0, selesai: 0, ditolak: 0 };
-    for (const d of deliveries) {
-      const tab = TABS.find(t => t.statuses.includes(d.status));
-      if (tab) map[tab.key] += 1;
+  const tabCounts = useMemo(() => {
+    const map: Record<TabKey, number> = {
+      berjalan: 0,
+      selesai: 0,
+      ditolak: 0,
+    };
+    if (counts) {
+      for (const tab of TABS) {
+        map[tab.key] = tab.statuses.reduce(
+          (sum, s) => sum + (counts[s] ?? 0),
+          0,
+        );
+      }
     }
     return map;
-  }, [deliveries]);
+  }, [counts]);
 
-  const activeConfig = TABS.find(t => t.key === activeTab) ?? TABS[0];
+  const totalActive = tabCounts.berjalan + tabCounts.selesai + tabCounts.ditolak;
 
-  const tabDeliveries = useMemo(
-    () => deliveries.filter(d => activeConfig.statuses.includes(d.status)),
-    [deliveries, activeConfig],
-  );
+  const renderBody = () => {
+    if (isError) return <ErrorState />;
+    if (isLoading && deliveries.length === 0) return <LoadingState />;
+    if (counts && totalActive === 0)
+      return <EmptyState message="Belum ada tugas pengiriman" />;
+    if (counts ? tabCounts[activeTab] === 0 : deliveries.length === 0)
+      return <EmptyState message={activeConfig.emptyMessage} />;
 
-  if (isLoading) return <LoadingState />;
-  if (isError) return <ErrorState />;
-  if (deliveries.length === 0)
-    return <EmptyState message="Belum ada tugas pengiriman" />;
+    return (
+      <FlatList
+        data={deliveries}
+        refreshControl={refreshControl}
+        keyExtractor={item => item.id}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.3}
+        ListFooterComponent={isFetchingNextPage ? <LoadingState /> : null}
+        renderItem={({ item }) => (
+          <CardListData
+            dnCode={item.dn_code}
+            routeFrom={item.route_from}
+            routeTo={item.route_to}
+            updatedAt={item.updated_at}
+            status={item.status}
+            onPress={() => navigation.navigate(ROUTES.DN_DETAIL, { item })}
+          />
+        )}
+      />
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -101,32 +141,14 @@ const DataListSecurity = () => {
                   active ? styles.tabLabelActive : styles.tabLabelInactive,
                 ]}
               >
-                {tab.label} · {counts[tab.key]}
+                {tab.label} · {tabCounts[tab.key]}
               </Text>
             </TouchableOpacity>
           );
         })}
       </View>
 
-      {tabDeliveries.length === 0 ? (
-        <EmptyState message={activeConfig.emptyMessage} />
-      ) : (
-        <FlatList
-          data={tabDeliveries}
-          refreshControl={refreshControl}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <CardListData
-              dnCode={item.dn_code}
-              routeFrom={item.route_from}
-              routeTo={item.route_to}
-              updatedAt={item.updated_at}
-              status={item.status}
-              onPress={() => navigation.navigate(ROUTES.DN_DETAIL, { item })}
-            />
-          )}
-        />
-      )}
+      {renderBody()}
     </View>
   );
 };

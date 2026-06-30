@@ -1,22 +1,26 @@
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
+import { DeliveryNote } from '../../delivery-detail/type';
+import useRefresh from '../../../shared/hooks/useRefresh';
+import { useDeliveryPicCounts, useDeliveryPicList } from '../hooks/useDeliveryPic';
 import { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import {
   EmptyState,
   ErrorState,
   LoadingState,
 } from '../../../components/StateComponents';
-import { useAuth } from '../../../context/AuthContext';
-import { useMyDeliveriesCounts, useMyDeliveriesList } from '../hooks/getDeliveryByDriver';
-import useRefresh from '../../../shared/hooks/useRefresh';
-import CardListData from '../../../components/CardListData';
 import { COLORS } from '../../../constant/color';
+import CardListData from '../../../components/CardListData';
+import { RootStackParamList, ROUTES } from '../../../routes';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { DeliveryNote } from '../../delivery-detail/type';
-import { ROUTES, RootStackParamList } from '../../../routes';
 
-type TabKey = 'baru' | 'berjalan' | 'selesai';
+type TabKey = 'sampai' | 'selesai';
 
 type TabConfig = {
   key: TabKey;
@@ -27,28 +31,20 @@ type TabConfig = {
 
 const TABS: TabConfig[] = [
   {
-    key: 'baru',
-    label: 'Baru',
-    statuses: ['pending'],
-    emptyMessage: 'Tidak ada tugas baru',
-  },
-  {
-    key: 'berjalan',
-    label: 'Berjalan',
-    statuses: ['in_transit'],
-    emptyMessage: 'Tidak ada pengiriman berjalan',
+    key: 'sampai',
+    label: 'Sampai',
+    statuses: ['arrived'],
+    emptyMessage: 'Tidak ada pengiriman yang sampai',
   },
   {
     key: 'selesai',
     label: 'Selesai',
-    statuses: ['completed', 'arrived'],
+    statuses: ['completed'],
     emptyMessage: 'Belum ada pengiriman selesai',
   },
 ];
 
-const DataListDriver = () => {
-  const { auth } = useAuth();
-  const driverId = auth.profile?.id;
+const DataListPic = () => {
   const [activeTab, setActiveTab] = useState<TabKey>(TABS[0].key);
   const activeConfig = TABS.find(t => t.key === activeTab) ?? TABS[0];
 
@@ -60,8 +56,8 @@ const DataListDriver = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useMyDeliveriesList(driverId, activeTab, activeConfig.statuses);
-  const { counts } = useMyDeliveriesCounts(driverId);
+  } = useDeliveryPicList(activeTab, activeConfig.statuses);
+  const { counts } = useDeliveryPicCounts();
 
   const { refreshControl } = useRefresh(async () => {
     await refetch();
@@ -70,7 +66,7 @@ const DataListDriver = () => {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const tabCounts = useMemo(() => {
-    const map: Record<TabKey, number> = { baru: 0, berjalan: 0, selesai: 0 };
+    const map: Record<TabKey, number> = { sampai: 0, selesai: 0 };
     if (counts) {
       for (const tab of TABS) {
         map[tab.key] = tab.statuses.reduce(
@@ -82,8 +78,7 @@ const DataListDriver = () => {
     return map;
   }, [counts]);
 
-  const totalActive =
-    tabCounts.baru + tabCounts.berjalan + tabCounts.selesai;
+  const totalActive = tabCounts.sampai + tabCounts.selesai;
 
   const renderBody = () => {
     if (isError) return <ErrorState />;
@@ -150,7 +145,7 @@ const DataListDriver = () => {
   );
 };
 
-export default DataListDriver;
+export default DataListPic;
 
 const styles = StyleSheet.create({
   container: {

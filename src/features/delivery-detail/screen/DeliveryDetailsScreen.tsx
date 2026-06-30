@@ -30,6 +30,7 @@ const DeliveryDetailsScreen = ({ route, navigation }: Props) => {
     driverMutate,
     securityMutate,
     rejectMutate,
+    completeMutate,
     isPending,
     isSecurityPending,
     isRejectPending,
@@ -44,6 +45,8 @@ const DeliveryDetailsScreen = ({ route, navigation }: Props) => {
     handleDelete,
     handleUpdate,
     handleUpdateBySecurity,
+    handleComplete,
+    isCompletePending,
   } = useDeliveryDetails({ item, navigation });
 
   if (isLoading) return <LoadingState />;
@@ -116,6 +119,18 @@ const DeliveryDetailsScreen = ({ route, navigation }: Props) => {
               title={isRejectPending ? 'Memproses...' : 'Reject Pengiriman'}
               onPress={handleOpenReject}
               rightIcon="closecircleo"
+            />
+          </View>
+        )}
+
+        {completeMutate && (
+          <View style={{ marginTop: 16, marginBottom: insets.bottom + 16 }}>
+            <Button
+              title={
+                isCompletePending ? 'Memproses...' : 'Selesaikan Pengiriman'
+              }
+              onPress={handleComplete}
+              rightIcon="checkcircleo"
             />
           </View>
         )}

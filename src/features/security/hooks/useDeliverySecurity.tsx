@@ -4,15 +4,13 @@ import { DeliveryNote } from '../../delivery-detail/type';
 import { DELIVERY_PAGE_SIZE } from '../../../shared/service/query';
 import {
   DeliveryStatusCounts,
-  getMyDeliveriesCounts,
-  getMyDeliveriesList,
-} from '../services/getDeliveryByDriver';
+  getDeliverySecurityCounts,
+  getDeliverySecurityList,
+} from '../services/getDeliverySecurity';
 
-export const getMyDeliveriesKey = (driverId: string) =>
-  ['my_deliveries', driverId] as const;
+export const SECURITY_DELIVERY_KEY = ['delivery_notes', 'security'] as const;
 
-const useMyDeliveriesList = (
-  driverId: string | undefined,
+const useDeliverySecurityList = (
   activeTab: string,
   statuses: DeliveryNote['status'][],
 ) => {
@@ -26,10 +24,9 @@ const useMyDeliveriesList = (
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<ApiResponse<DeliveryNote[]>, ApiError>({
-    queryKey: [...getMyDeliveriesKey(driverId ?? ''), 'list', activeTab],
+    queryKey: [...SECURITY_DELIVERY_KEY, 'list', activeTab],
     queryFn: ({ pageParam = 0 }) =>
-      getMyDeliveriesList(driverId!, statuses, pageParam as number),
-    enabled: !!driverId,
+      getDeliverySecurityList(statuses, pageParam as number),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
       lastPage.data.length < DELIVERY_PAGE_SIZE ? undefined : allPages.length,
@@ -56,11 +53,10 @@ const useMyDeliveriesList = (
   };
 };
 
-const useMyDeliveriesCounts = (driverId: string | undefined) => {
+const useDeliverySecurityCounts = () => {
   const { data, isLoading } = useQuery<ApiResponse<DeliveryStatusCounts>, ApiError>({
-    queryKey: [...getMyDeliveriesKey(driverId ?? ''), 'counts'],
-    queryFn: () => getMyDeliveriesCounts(driverId!),
-    enabled: !!driverId,
+    queryKey: [...SECURITY_DELIVERY_KEY, 'counts'],
+    queryFn: () => getDeliverySecurityCounts(),
     staleTime: 1000 * 60 * 5,
     retry: 2,
   });
@@ -71,4 +67,4 @@ const useMyDeliveriesCounts = (driverId: string | undefined) => {
   };
 };
 
-export { useMyDeliveriesList, useMyDeliveriesCounts };
+export { useDeliverySecurityList, useDeliverySecurityCounts };

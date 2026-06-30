@@ -7,11 +7,13 @@ import { DELIVERY_NOTES_KEY as HOME_DELIVERY_KEY } from '../../home/hooks/useDel
 import { DELIVERY_NOTES_KEY as STAFF_DELIVERY_KEY } from '../../staff/hooks/getDeliveryHooks';
 import { getDeliveryDetailKey } from './detailHooks';
 import {
+  updateCompleteRequest,
   updateDriverApproval,
   updateRejectRequest,
   updateSecurityApproval,
 } from '../service/updateStatus';
 import { RejectPayload } from '../../security/type';
+import { CompletePayload } from '../../pic/type';
 
 export const useUpdateDeliveryStatusMutation = (driverId: string) => {
   const queryClient = useQueryClient();
@@ -93,6 +95,34 @@ export const useRejectRequestMutation = (driverId: string) => {
     },
     onError: error => {
       console.log('[updateRejectRequest] gagal:', error.status, error.message);
+    },
+  });
+};
+
+export const useCompleteRequestMutation = (driverId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ApiResponse<DeliveryNote>, ApiError, CompletePayload>({
+    mutationFn: ({ id, ...req }) => {
+      console.log('[updateCompleteRequest] id:', id);
+      console.log('[updateCompleteRequest] payload:', req);
+      return updateCompleteRequest(id, req);
+    },
+    onSuccess: response => {
+      console.log('[updateCompleteRequest] berhasil:', response.data);
+      queryClient.invalidateQueries({ queryKey: getMyDeliveriesKey(driverId) });
+      queryClient.invalidateQueries({ queryKey: HOME_DELIVERY_KEY });
+      queryClient.invalidateQueries({ queryKey: STAFF_DELIVERY_KEY });
+      queryClient.invalidateQueries({
+        queryKey: getDeliveryDetailKey(response.data.id),
+      });
+    },
+    onError: error => {
+      console.log(
+        '[updateCompleteRequest] gagal:',
+        error.status,
+        error.message,
+      );
     },
   });
 };

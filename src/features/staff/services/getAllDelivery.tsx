@@ -1,14 +1,13 @@
 import { supabase } from '../../../lib/supabase';
 import { ApiResponse } from '../../../type/api';
 import { DeliveryNote } from '../../delivery-detail/type';
-
-const PAGE_SIZE = 5;
+import { DELIVERY_PAGE_SIZE } from '../../../shared/service/query';
 
 export const getDeliveryTable = async (
   page: number,
 ): Promise<ApiResponse<DeliveryNote[]>> => {
-  const from = page * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
+  const from = page * DELIVERY_PAGE_SIZE;
+  const to = from + DELIVERY_PAGE_SIZE - 1;
 
   const { data, error } = await supabase
     .from('delivery_table')

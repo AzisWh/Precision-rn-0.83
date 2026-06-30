@@ -1,3 +1,5 @@
+export const DELIVERY_PAGE_SIZE = 5;
+
 export const DELIVERY_SELECT_QUERY = `
   *,
   driver:user_table!delivery_table_driver_id_fkey(

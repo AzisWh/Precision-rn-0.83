@@ -1,6 +1,7 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { DeliveryNote } from '../../delivery-detail/type';
 import { ApiResponse } from '../../../type/api';
+import { DELIVERY_PAGE_SIZE } from '../../../shared/service/query';
 import { getDeliveryTable } from '../services/getAllDelivery';
 
 export const DELIVERY_NOTES_KEY = ['delivery_all'] as const;
@@ -20,7 +21,7 @@ const getAllDelivery = () => {
     queryKey: DELIVERY_NOTES_KEY,
     queryFn: ({ pageParam = 0 }) => getDeliveryTable(pageParam as number),
     getNextPageParam: (lastPage, allPages) =>
-      lastPage.data.length < 5 ? undefined : allPages.length,
+      lastPage.data.length < DELIVERY_PAGE_SIZE ? undefined : allPages.length,
     initialPageParam: 0,
     staleTime: 1000 * 60 * 5,
     retry: 2,

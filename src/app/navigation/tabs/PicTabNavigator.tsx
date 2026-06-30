@@ -12,7 +12,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../../constant/color';
 import HomeHeader from '../../../components/HeaderTitle';
 import PicHomeScreen from '../../../features/pic/screens/PicHomeScreen';
-import PicApprovalScreen from '../../../features/pic/screens/PicApprovalScreen';
 import SettingScreens from '../../../features/settings/screen/SettingScreens';
 import { PicTabParamList } from '../../../routes';
 
@@ -26,13 +25,6 @@ const getTabConfig = (routeName: string) => {
         label: 'DASHBOARD',
         icon: (color: string, size: number) => (
           <MaterialIcons name="dashboard" size={size} color={color} />
-        ),
-      };
-    case 'PicApproval':
-      return {
-        label: 'APPROVAL',
-        icon: (color: string, size: number) => (
-          <MaterialIcons name="check-circle" size={size} color={color} />
         ),
       };
     case 'Settings':
@@ -83,7 +75,9 @@ const CustomTabBar = ({ state, navigation }: any) => {
               style={[styles.tabContent, isFocused && styles.tabContentActive]}
             >
               {icon(iconColor, iconSize)}
-              <Text style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
+              <Text
+                style={[styles.tabLabel, isFocused && styles.tabLabelActive]}
+              >
                 {label}
               </Text>
             </View>
@@ -103,7 +97,6 @@ const PicTabNavigator = () => {
         screenOptions={{ headerShown: false }}
       >
         <Tab.Screen name="PicHome" component={PicHomeScreen} />
-        <Tab.Screen name="PicApproval" component={PicApprovalScreen} />
         <Tab.Screen name="Settings" component={SettingScreens} />
       </Tab.Navigator>
     </SafeAreaView>
