@@ -17,6 +17,8 @@ export type FieldConfig = {
   icon: string;
   keyboardType?: 'default' | 'phone-pad';
   maxLength?: number;
+  // false => baris tampil terkunci (read-only), tidak bisa dibuka/diedit.
+  editable?: boolean;
 };
 
 type EditFieldSheetProps = {

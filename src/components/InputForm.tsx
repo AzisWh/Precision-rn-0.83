@@ -21,6 +21,7 @@ type InputFormProps = {
   type: 'text' | 'password' | 'number';
   value: string;
   onChangeText: (text: string) => void;
+  editable?: boolean;
 };
 
 const getKeyboardType = (type: InputFormProps['type']): KeyboardTypeOptions => {
@@ -42,6 +43,7 @@ const InputForm = ({
   type,
   value,
   onChangeText,
+  editable = true,
 }: InputFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
@@ -68,7 +70,7 @@ const InputForm = ({
           style={styles.leftIcon}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, !editable && styles.inputDisabled]}
           placeholder={placeholder}
           placeholderTextColor={COLORS.placeholder}
           value={value}
@@ -76,6 +78,7 @@ const InputForm = ({
           secureTextEntry={isPassword && !showPassword}
           keyboardType={getKeyboardType(type)}
           autoCapitalize="none"
+          editable={editable}
         />
         {isPassword && (
           <TouchableOpacity
@@ -136,6 +139,9 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
     height: '100%',
     padding: 0,
+  },
+  inputDisabled: {
+    color: COLORS.textSecondary,
   },
   eyeButton: {
     padding: 4,

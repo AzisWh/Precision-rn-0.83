@@ -32,7 +32,7 @@ export type DeliveryType = 'document' | 'vehicle' | 'package' | 'standard';
 export type DeliveryNote = {
   id: string;
   dn_code: string;
-  status: 'in_transit' | 'pending' | 'completed' | 'dispatched';
+  status: 'in_transit' | 'pending' | 'completed' | 'arrived';
   route_from: string | null;
   route_to: string | null;
   recipient: string | null;
@@ -52,5 +52,5 @@ export type DeliverySummary = {
   total_active: number;
   in_transit: number;
   pending: number;
-  dispatched: number;
+  arrived: number;
 };

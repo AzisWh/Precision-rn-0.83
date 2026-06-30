@@ -23,7 +23,7 @@ export type NewDeliveryInput = {
 
 export type UpdateDeliveryInput = {
   dn_code?: string;
-  status?: 'pending' | 'in_transit' | 'dispatched' | 'completed';
+  status?: 'pending' | 'in_transit' | 'arrived' | 'completed';
   route_from?: string;
   route_to?: string;
   recipient?: string;

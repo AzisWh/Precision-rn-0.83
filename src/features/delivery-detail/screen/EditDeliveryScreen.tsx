@@ -34,7 +34,7 @@ const DELIVERY_TYPES: DeliveryType[] = [
 
 const DELIVERY_STATUSES: DeliveryStatus[] = [
   'pending',
-  'dispatched',
+  'arrived',
   'in_transit',
   'completed',
 ];
@@ -117,7 +117,6 @@ const EditDeliveryScreen = ({ route, navigation }: Props) => {
 
   return (
     <SafeAreaView edges={['top', 'bottom']} style={styles.container}>
-      {/* Header: Batal | Edit Delivery | Simpan */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -136,7 +135,10 @@ const EditDeliveryScreen = ({ route, navigation }: Props) => {
           style={styles.headerSide}
         >
           <Text
-            style={[styles.saveText, isSaving && { color: COLORS.textSecondary }]}
+            style={[
+              styles.saveText,
+              isSaving && { color: COLORS.textSecondary },
+            ]}
           >
             {isSaving ? 'Menyimpan...' : 'Simpan'}
           </Text>

@@ -5,12 +5,15 @@ import { getDeliveryTable } from '../services/HomeService';
 
 export const DELIVERY_NOTES_KEY = ['delivery_notes'] as const;
 
-const useDeliveryTable = () => {
+const useDeliveryTable = (options?: { includeCompleted?: boolean }) => {
+  const includeCompleted = options?.includeCompleted ?? false;
   const { data, isLoading, isError, error, refetch, isSuccess } = useQuery<
     ApiResponse<DeliveryNote[]>
   >({
-    queryKey: DELIVERY_NOTES_KEY,
-    queryFn: getDeliveryTable,
+    queryKey: includeCompleted
+      ? [...DELIVERY_NOTES_KEY, 'all']
+      : DELIVERY_NOTES_KEY,
+    queryFn: () => getDeliveryTable({ includeCompleted }),
     staleTime: 1000 * 60 * 5,
     retry: 2,
   });

@@ -34,7 +34,13 @@ const FIELDS: FieldConfig[] = [
     icon: 'person',
     keyboardType: 'default',
   },
-  { key: 'phone', label: 'Nomor HP', icon: 'phone', keyboardType: 'phone-pad' },
+  {
+    key: 'phone',
+    label: 'Nomor HP',
+    icon: 'phone',
+    keyboardType: 'phone-pad',
+    editable: false,
+  },
 ];
 
 const TOAST_DURATION = 2000;
@@ -171,35 +177,64 @@ const EditProfileScreen = ({ navigation }: Props) => {
         </View>
 
         <View style={styles.card}>
-          {FIELDS.map((field, index) => (
-            <View key={field.key}>
-              <TouchableOpacity
-                style={styles.fieldRow}
-                onPress={() => openField(field)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.fieldIcon}>
-                  <MaterialIcons
-                    name={field.icon}
-                    size={18}
-                    color={COLORS.brand}
-                  />
-                </View>
-                <View style={styles.fieldBody}>
-                  <Text style={styles.fieldLabel}>{field.label}</Text>
-                  <Text style={styles.fieldValue} numberOfLines={1}>
-                    {localProfile[field.key] || '-'}
-                  </Text>
-                </View>
-                <MaterialIcons
-                  name="chevron-right"
-                  size={22}
-                  color={COLORS.textSecondary}
-                />
-              </TouchableOpacity>
-              {index < FIELDS.length - 1 && <View style={styles.divider} />}
-            </View>
-          ))}
+          {FIELDS.map((field, index) => {
+            const isEditable = field.editable !== false;
+            return (
+              <View key={field.key}>
+                {isEditable ? (
+                  <TouchableOpacity
+                    style={styles.fieldRow}
+                    onPress={() => openField(field)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.fieldIcon}>
+                      <MaterialIcons
+                        name={field.icon}
+                        size={18}
+                        color={COLORS.brand}
+                      />
+                    </View>
+                    <View style={styles.fieldBody}>
+                      <Text style={styles.fieldLabel}>{field.label}</Text>
+                      <Text style={styles.fieldValue} numberOfLines={1}>
+                        {localProfile[field.key] || '-'}
+                      </Text>
+                    </View>
+                    <MaterialIcons
+                      name="chevron-right"
+                      size={22}
+                      color={COLORS.textSecondary}
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.fieldRow}>
+                    <View style={styles.fieldIcon}>
+                      <MaterialIcons
+                        name={field.icon}
+                        size={18}
+                        color={COLORS.brand}
+                      />
+                    </View>
+                    <View style={styles.fieldBody}>
+                      <Text style={styles.fieldLabel}>{field.label}</Text>
+                      <Text style={styles.fieldValue} numberOfLines={1}>
+                        {localProfile[field.key] || '-'}
+                      </Text>
+                      <Text style={styles.fieldHint}>
+                        Hubungi admin untuk mengubah
+                      </Text>
+                    </View>
+                    <MaterialIcons
+                      name="lock"
+                      size={18}
+                      color={COLORS.textSecondary}
+                    />
+                  </View>
+                )}
+                {index < FIELDS.length - 1 && <View style={styles.divider} />}
+              </View>
+            );
+          })}
         </View>
       </View>
 
@@ -335,6 +370,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.textPrimary,
+    marginTop: 2,
+  },
+  fieldHint: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: COLORS.textSecondary,
     marginTop: 2,
   },
   divider: {

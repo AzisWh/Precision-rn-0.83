@@ -1,10 +1,8 @@
-import { supabase } from "../../../lib/supabase";
-import { DELIVERY_SELECT_QUERY } from "../../../shared/service/query";
-import { ApiError, ApiResponse } from "../../../type/api";
-import { DeliveryNote } from "../../delivery-detail/type";
-import { NewDeliveryInput } from "../type";
-
-
+import { supabase } from '../../../lib/supabase';
+import { DELIVERY_SELECT_QUERY } from '../../../shared/service/query';
+import { ApiError, ApiResponse } from '../../../type/api';
+import { DeliveryNote } from '../../delivery-detail/type';
+import { NewDeliveryInput } from '../type';
 
 export const createDelivery = async (
   req: NewDeliveryInput,
@@ -21,5 +19,9 @@ export const createDelivery = async (
   }
 
   console.log('✅ createDelivery success:', data);
-  return { status: 200, message: 'Delivery berhasil dibuat', data: data as DeliveryNote };
+  return {
+    status: 200,
+    message: 'Delivery berhasil dibuat',
+    data: data as DeliveryNote,
+  };
 };

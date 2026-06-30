@@ -25,15 +25,13 @@ const STATUS_STYLES: Record<DeliveryStatus, StatusBadgeStyle> = {
     text: COLORS.white,
     label: 'IN TRANSIT',
   },
-  dispatched: {
+  arrived: {
     bg: COLORS.brand,
     text: COLORS.white,
-    label: 'DISPATCHED',
+    label: 'ARRIVED',
   },
 };
 
-// If a new status (e.g. 'failed') is added to DeliveryNote later, add it to
-// STATUS_STYLES above. This fallback keeps rendering safe for unknown values.
 const getStatusStyle = (status: DeliveryStatus): StatusBadgeStyle =>
   STATUS_STYLES[status] ?? {
     bg: COLORS.footerBackground,

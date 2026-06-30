@@ -3,14 +3,18 @@ import { ApiResponse } from '../../../type/api';
 import { DeliveryNote } from '../type/home';
 import { DeliverySummary } from '../type/home';
 
-export const getDeliveryTable = async (): Promise<
-  ApiResponse<DeliveryNote[]>
-> => {
-  const { data, error } = await supabase
-    .from('delivery_table')
-    .select('*')
-    .neq('status', 'completed')
-    .order('updated_at', { ascending: false });
+export const getDeliveryTable = async (
+  options?: { includeCompleted?: boolean },
+): Promise<ApiResponse<DeliveryNote[]>> => {
+  let query = supabase.from('delivery_table').select('*');
+
+  if (!options?.includeCompleted) {
+    query = query.neq('status', 'completed');
+  }
+
+  const { data, error } = await query.order('updated_at', {
+    ascending: false,
+  });
 
   if (error) {
     console.log('❌ getDeliveryNotes error:', error.message);
@@ -43,7 +47,7 @@ export const getDeliverySummary = async (): Promise<
       total_active: notes.length,
       in_transit: notes.filter(d => d.status === 'in_transit').length,
       pending: notes.filter(d => d.status === 'pending').length,
-      dispatched: notes.filter(d => d.status === 'dispatched').length,
+      arrived: notes.filter(d => d.status === 'arrived').length,
     },
   };
 };

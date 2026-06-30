@@ -13,7 +13,6 @@ type LocationPickerModalProps = {
   onConfirm: (coord: LatLng) => void;
 };
 
-// Pusat default Jakarta (sesuai area data dummy delivery_table)
 const DEFAULT_COORD: LatLng = {
   latitude: -6.208763,
   longitude: 106.845599,
@@ -32,7 +31,6 @@ const LocationPickerModal = ({
   const insets = useSafeAreaInsets();
   const [coord, setCoord] = useState<LatLng>(initial ?? DEFAULT_COORD);
 
-  // Reset ke posisi awal tiap kali picker dibuka
   useEffect(() => {
     if (visible) {
       setCoord(initial ?? DEFAULT_COORD);

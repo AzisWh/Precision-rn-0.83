@@ -3,7 +3,6 @@ import React from 'react';
 import { COLORS } from '../../../constant/color';
 import HistoryCard from '../../history/components/HistoryCard';
 
-// TODO: ganti dengan data real dari API (field lastSync per delivery)
 const LAST_SYNC_DUMMY = '02:45 PM Today';
 
 const StaffHero = () => {

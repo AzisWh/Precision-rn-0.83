@@ -22,6 +22,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StaffTabParamList } from '../../../routes';
 import { useCreateDeliveryMutation } from '../hooks/insertDeliveryHooks';
 import { ApiError } from '../../../type/api';
+import { useAuth } from '../../../context/AuthContext';
 
 const DUMMY_DRIVERS: DriverOption[] = [
   {
@@ -63,6 +64,7 @@ const DeliveryForm = () => {
   const { drivers, isLoading: loadingDrivers } = useDriverList();
   const { mutateAsync: createDelivery, isPending: isSubmitting } =
     useCreateDeliveryMutation();
+  const { auth } = useAuth();
   const navigation =
     useNavigation<BottomTabNavigationProp<StaffTabParamList>>();
 
@@ -72,7 +74,6 @@ const DeliveryForm = () => {
   const [routeFrom, setRouteFrom] = useState('');
   const [routeTo, setRouteTo] = useState('');
   const [recipient, setRecipient] = useState('');
-  const [signedBy, setSignedBy] = useState('');
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('package');
   const [driverId, setDriverId] = useState<string>('');
   const [origin, setOrigin] = useState<LatLng | null>(null);
@@ -125,7 +126,6 @@ const DeliveryForm = () => {
     setRouteFrom('');
     setRouteTo('');
     setRecipient('');
-    setSignedBy('');
     setDeliveryType('package');
     setDriverId('');
     setOrigin(null);
@@ -157,7 +157,7 @@ const DeliveryForm = () => {
       route_from: routeFrom.trim(),
       route_to: routeTo.trim(),
       recipient: recipient.trim(),
-      signed_by: signedBy.trim() || null,
+      signed_by: auth.profile?.full_name ?? null,
       delivery_type: deliveryType,
       driver_id: driverId,
       origin_lat: origin.latitude,
@@ -269,13 +269,14 @@ const DeliveryForm = () => {
       />
 
       <InputForm
-        label="Signed By (opsional)"
+        label="Signed By (otomatis)"
         placeholder="cth: Andi"
         leftIcon="pencil-outline"
         leftIconFamily="Ionicons"
         type="text"
-        value={signedBy}
-        onChangeText={setSignedBy}
+        onChangeText={() => {}}
+        value={auth.profile?.full_name ?? ''}
+        editable={false}
       />
 
       <View style={styles.fieldWrapper}>

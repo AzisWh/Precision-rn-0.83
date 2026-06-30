@@ -41,8 +41,8 @@ const HomeSummary = () => {
             />
 
             <SummaryCard
-              title="Dispatched"
-              value={summary?.dispatched ?? 0}
+              title="Arrived"
+              value={summary?.arrived ?? 0}
               suffix="h"
               backgroundColor={COLORS.white}
               titleColor={COLORS.textDark}

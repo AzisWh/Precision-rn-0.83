@@ -12,7 +12,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../../constant/color';
 import HomeHeader from '../../../components/HeaderTitle';
 import SecurityHomeScreen from '../../../features/security/screens/SecurityHomeScreen';
-import SecurityScanScreen from '../../../features/security/screens/SecurityScanScreen';
 import SettingScreens from '../../../features/settings/screen/SettingScreens';
 import { SecurityTabParamList } from '../../../routes';
 
@@ -23,18 +22,12 @@ const getTabConfig = (routeName: string) => {
   switch (routeName) {
     case 'SecurityHome':
       return {
-        label: 'HOME',
+        label: 'SHIPPING',
         icon: (color: string, size: number) => (
-          <MaterialIcons name="security" size={size} color={color} />
+          <MaterialIcons name="local-shipping" size={size} color={color} />
         ),
       };
-    case 'SecurityScan':
-      return {
-        label: 'SCAN',
-        icon: (color: string, size: number) => (
-          <MaterialIcons name="qr-code-scanner" size={size} color={color} />
-        ),
-      };
+
     case 'Settings':
       return {
         label: 'SETTINGS',
@@ -83,7 +76,9 @@ const CustomTabBar = ({ state, navigation }: any) => {
               style={[styles.tabContent, isFocused && styles.tabContentActive]}
             >
               {icon(iconColor, iconSize)}
-              <Text style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
+              <Text
+                style={[styles.tabLabel, isFocused && styles.tabLabelActive]}
+              >
                 {label}
               </Text>
             </View>
@@ -103,7 +98,6 @@ const SecurityTabNavigator = () => {
         screenOptions={{ headerShown: false }}
       >
         <Tab.Screen name="SecurityHome" component={SecurityHomeScreen} />
-        <Tab.Screen name="SecurityScan" component={SecurityScanScreen} />
         <Tab.Screen name="Settings" component={SettingScreens} />
       </Tab.Navigator>
     </SafeAreaView>
