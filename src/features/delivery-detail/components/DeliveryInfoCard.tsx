@@ -30,6 +30,11 @@ const STATUS_STYLES: Record<DeliveryStatus, StatusBadgeStyle> = {
     text: COLORS.white,
     label: 'ARRIVED',
   },
+  rejected: {
+    bg: COLORS.error,
+    text: COLORS.white,
+    label: 'REJECTED',
+  },
 };
 
 const getStatusStyle = (status: DeliveryStatus): StatusBadgeStyle =>

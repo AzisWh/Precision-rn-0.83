@@ -17,22 +17,12 @@ export type Driver = {
   detail: DriverDetail | null;
 };
 
-// export type Driver = {
-//   id: string;
-//   name: string;
-//   phone: string | null;
-//   vehicle_type: string | null;
-//   driver_lat: number | null;
-//   driver_lng: number | null;
-//   last_location_update: string | null;
-// };
-
 export type DeliveryType = 'document' | 'vehicle' | 'package' | 'standard';
 
 export type DeliveryNote = {
   id: string;
   dn_code: string;
-  status: 'in_transit' | 'pending' | 'completed' | 'arrived';
+  status: 'in_transit' | 'pending' | 'completed' | 'arrived' | 'rejected';
   route_from: string | null;
   route_to: string | null;
   recipient: string | null;
@@ -46,6 +36,8 @@ export type DeliveryNote = {
   dest_lat: number | null;
   dest_lng: number | null;
   driver: Driver | null;
+  reject_reason: string | null;
+  reject_by: string | null;
 };
 
 export type DeliverySummary = {

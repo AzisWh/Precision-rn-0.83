@@ -3,6 +3,7 @@ import { DELIVERY_SELECT_QUERY } from "../../../shared/service/query";
 import { ApiError, ApiResponse } from "../../../type/api";
 import { DeliveryNote } from "../type";
 import { DriverApproval } from "../../driver/type";
+import { RejectRequest } from "../../security/type";
 
 export const updateDriverApproval = async (
   id: string,
@@ -43,3 +44,23 @@ export const updateSecurityApproval = async (
   console.log('✅ updateSecurityApproval success:', data);
   return { status: 200, message: 'Delivery berhasil diperbarui', data: data as DeliveryNote };
 };
+
+export const updateRejectRequest = async (
+  id: string,
+  req: RejectRequest,
+): Promise<ApiResponse<DeliveryNote>> => {
+  const { data, error } = await supabase
+    .from('delivery_table')
+    .update(req)
+    .eq('id', id)
+    .select(DELIVERY_SELECT_QUERY)
+    .single();
+
+  if (error) {
+    console.log('❌ updateRejectRequest error:', error.message);
+    throw { status: 500, message: error.message } as ApiError;
+  }
+
+  console.log('✅ updateRejectRequest success:', data);
+  return { status: 200, message: 'Delivery berhasil diperbarui', data: data as DeliveryNote };
+}

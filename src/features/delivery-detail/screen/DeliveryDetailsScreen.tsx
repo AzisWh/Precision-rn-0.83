@@ -1,11 +1,4 @@
-import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Text,
-} from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   SafeAreaView,
@@ -16,16 +9,10 @@ import { ROUTES, RootStackParamList } from '../../../routes';
 import { COLORS } from '../../../constant/color';
 import DeliveryMap from '../components/DeliveryMap';
 import DeliveryInfoCard from '../components/DeliveryInfoCard';
-import useDeliveryDetail from '../hooks/detailHooks';
 import { LoadingState } from '../../../components/StateComponents';
-import { useRole } from '../../../shared/hooks/useRole';
-import { useDeleteDeliveryMutation } from '../hooks/editDeliveryHooks';
 import Button from '../../../components/Button';
-import {
-  useUpdateDeliveryStatusMutation,
-  useUpdateStatusBySecurity,
-} from '../hooks/updateStatusHooks';
-import { useAuth } from '../../../context/AuthContext';
+import RejectReasonSheet from '../components/RejectReasonSheet';
+import useDeliveryDetails from '../hooks/useDeliveryDetails';
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -35,107 +22,29 @@ type Props = NativeStackScreenProps<
 const DeliveryDetailsScreen = ({ route, navigation }: Props) => {
   const { item } = route.params;
   const insets = useSafeAreaInsets();
-  const { auth } = useAuth();
 
-  const { deliveryDetail, isLoading } = useDeliveryDetail(item.id);
-
-  const data = deliveryDetail ?? item;
-
-  const { isStaff, isDriver, isSecurity } = useRole();
-  const canMutate = isStaff && data.status !== 'completed';
-  const driverMutate =
-    isDriver && data.driver_id !== null && data.status == 'pending';
-  const securityMutate = isSecurity && data.status === 'in_transit';
-  const { mutate: updateStatus, isPending } = useUpdateDeliveryStatusMutation(
-    auth.profile?.id ?? '',
-  );
-  const { mutate: updateSecurityStatus, isPending: isSecurityPending } =
-    useUpdateStatusBySecurity(auth.profile?.id ?? '');
-  const { mutate: deleteMutate } = useDeleteDeliveryMutation();
-
-  const handleUpdate = () => {
-    Alert.alert(
-      'Konfirmasi',
-      `Yakin mau konfirmasi pengiriman DN ${data.dn_code}?`,
-      [
-        { text: 'Batal', style: 'cancel' },
-        {
-          text: 'Konfirmasi',
-          style: 'destructive',
-          onPress: () => {
-            updateStatus(
-              { id: data.id, status: 'in_transit' },
-              {
-                onSuccess: () => navigation.goBack(),
-                onError: err =>
-                  Alert.alert(
-                    'Gagal update status',
-                    err.message ?? 'Terjadi kesalahan',
-                  ),
-              },
-            );
-          },
-        },
-      ],
-      { cancelable: true },
-    );
-  };
-  const handleUpdateBySecurity = () => {
-    Alert.alert(
-      'Konfirmasi',
-      `Yakin mau konfirmasi pengiriman DN ${data.dn_code}?`,
-      [
-        { text: 'Batal', style: 'cancel' },
-        {
-          text: 'Konfirmasi',
-          style: 'destructive',
-          onPress: () => {
-            updateSecurityStatus(
-              { id: data.id, status: 'arrived' },
-              {
-                onSuccess: () => navigation.goBack(),
-                onError: err =>
-                  Alert.alert(
-                    'Gagal update status',
-                    err.message ?? 'Terjadi kesalahan',
-                  ),
-              },
-            );
-          },
-        },
-      ],
-      { cancelable: true },
-    );
-  };
-
-  const handleEdit = () =>
-    navigation.navigate(ROUTES.EDIT_DELIVERY, { item: data });
-
-  const handleDelete = () =>
-    Alert.alert(
-      'Hapus Delivery?',
-      `Yakin mau hapus DN ${data.dn_code}?`,
-      [
-        { text: 'Batal', style: 'cancel' },
-        {
-          text: 'Hapus',
-          style: 'destructive',
-          onPress: () => {
-            deleteMutate(data.id, {
-              onSuccess: () => navigation.goBack(),
-              onError: err =>
-                Alert.alert(
-                  'Gagal menghapus',
-                  err.message ?? 'Terjadi kesalahan',
-                ),
-            });
-          },
-        },
-      ],
-      { cancelable: true },
-    );
-
-  console.log('Delivery Detail Data:', data);
+  const {
+    data,
+    isLoading,
+    canMutate,
+    driverMutate,
+    securityMutate,
+    rejectMutate,
+    isPending,
+    isSecurityPending,
+    isRejectPending,
+    isRejectSheetVisible,
+    rejectReason,
+    rejectBy,
+    setRejectReason,
+    handleOpenReject,
+    handleCloseReject,
+    handleReject,
+    handleEdit,
+    handleDelete,
+    handleUpdate,
+    handleUpdateBySecurity,
+  } = useDeliveryDetails({ item, navigation });
 
   if (isLoading) return <LoadingState />;
 
@@ -200,7 +109,27 @@ const DeliveryDetailsScreen = ({ route, navigation }: Props) => {
             />
           </View>
         )}
+
+        {rejectMutate && (
+          <View style={{ marginTop: 16, marginBottom: insets.bottom + 16 }}>
+            <Button
+              title={isRejectPending ? 'Memproses...' : 'Reject Pengiriman'}
+              onPress={handleOpenReject}
+              rightIcon="closecircleo"
+            />
+          </View>
+        )}
       </ScrollView>
+
+      <RejectReasonSheet
+        visible={isRejectSheetVisible}
+        rejectBy={rejectBy}
+        reason={rejectReason}
+        onChangeReason={setRejectReason}
+        onClose={handleCloseReject}
+        onSubmit={handleReject}
+        isPending={isRejectPending}
+      />
     </SafeAreaView>
   );
 };

@@ -37,6 +37,7 @@ const DELIVERY_STATUSES: DeliveryStatus[] = [
   'arrived',
   'in_transit',
   'completed',
+  'rejected'
 ];
 
 type LocationField = 'origin' | 'destination';

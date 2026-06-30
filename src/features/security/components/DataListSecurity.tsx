@@ -15,7 +15,7 @@ import CardListData from '../../../components/CardListData';
 import { COLORS } from '../../../constant/color';
 import { useNavigation } from '@react-navigation/native';
 
-type TabKey = 'berjalan' | 'selesai';
+type TabKey = 'berjalan' | 'selesai' | 'ditolak';
 
 type TabConfig = {
   key: TabKey;
@@ -34,14 +34,24 @@ const TABS: TabConfig[] = [
   {
     key: 'selesai',
     label: 'Selesai',
-    statuses: ['completed', 'arrived'],
+    statuses: ['arrived'],
     emptyMessage: 'Belum ada pengiriman selesai',
+  },
+  {
+    key: 'ditolak',
+    label: 'Ditolak',
+    statuses: ['rejected'],
+    emptyMessage: 'Belum ada pengiriman ditolak',
   },
 ];
 
 const DataListSecurity = () => {
-  const { deliveryNotes: deliveries, isLoading, isError, refetch } =
-    useDeliveryTable({ includeCompleted: true });
+  const {
+    deliveryNotes: deliveries,
+    isLoading,
+    isError,
+    refetch,
+  } = useDeliveryTable({ includeCompleted: true });
   const { refreshControl } = useRefresh(async () => {
     await refetch();
   });
@@ -50,7 +60,7 @@ const DataListSecurity = () => {
   const [activeTab, setActiveTab] = useState<TabKey>(TABS[0].key);
 
   const counts = useMemo(() => {
-    const map: Record<TabKey, number> = { berjalan: 0, selesai: 0 };
+    const map: Record<TabKey, number> = { berjalan: 0, selesai: 0, ditolak: 0 };
     for (const d of deliveries) {
       const tab = TABS.find(t => t.statuses.includes(d.status));
       if (tab) map[tab.key] += 1;

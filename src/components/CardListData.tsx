@@ -22,10 +22,19 @@ const CardListData = ({
   onPress,
 }: Props) => {
   const isPending = status?.toLowerCase() === 'pending';
+  const isRejected = status?.toLowerCase() === 'rejected';
 
-  const badgeBg = isPending ? COLORS.summaryPendingBg : COLORS.summaryBlue;
+  const badgeBg = isRejected
+    ? COLORS.error
+    : isPending
+      ? COLORS.summaryPendingBg
+      : COLORS.summaryBlue;
 
-  const badgeText = isPending ? COLORS.summaryPendingText : COLORS.white;
+  const badgeText = isRejected
+    ? COLORS.white
+    : isPending
+      ? COLORS.summaryPendingText
+      : COLORS.white;
 
   const iconName = isPending ? 'clipboard-clock-outline' : 'truck';
 
