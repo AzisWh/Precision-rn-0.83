@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Marker, LatLng } from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../../../constant/color';
+import { useMapProvider } from '../../../shared/hooks/useMapProvider';
 
 type LocationPickerModalProps = {
   visible: boolean;
@@ -30,6 +38,7 @@ const LocationPickerModal = ({
 }: LocationPickerModalProps) => {
   const insets = useSafeAreaInsets();
   const [coord, setCoord] = useState<LatLng>(initial ?? DEFAULT_COORD);
+  const { provider, isReady } = useMapProvider();
 
   useEffect(() => {
     if (visible) {
@@ -65,22 +74,30 @@ const LocationPickerModal = ({
           </TouchableOpacity>
         </View>
 
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: coord.latitude,
-            longitude: coord.longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-          }}
-        >
-          <Marker
-            draggable
-            coordinate={coord}
-            onDragEnd={e => setCoord(e.nativeEvent.coordinate)}
-            pinColor={COLORS.secondary}
-          />
-        </MapView>
+        {isReady ? (
+          <MapView
+            provider={provider}
+            style={styles.map}
+            initialRegion={{
+              latitude: coord.latitude,
+              longitude: coord.longitude,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }}
+          >
+            <Marker
+              draggable
+              coordinate={coord}
+              onDragEnd={e => setCoord(e.nativeEvent.coordinate)}
+              pinColor={COLORS.secondary}
+            />
+          </MapView>
+        ) : (
+          <View style={[styles.map, styles.loading]}>
+            <ActivityIndicator color={COLORS.brand} />
+            <Text style={styles.loadingText}>Memuat peta...</Text>
+          </View>
+        )}
 
         <View style={styles.footer}>
           <View style={styles.coordRow}>
@@ -136,6 +153,16 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
     width: '100%',
+  },
+  loading: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+  },
+  loadingText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: COLORS.textSecondary,
   },
   footer: {
     paddingHorizontal: 20,

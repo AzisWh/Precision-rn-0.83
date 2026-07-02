@@ -1,8 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  View,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import MapView, { Marker, Polyline, Region, LatLng } from 'react-native-maps';
 import { DeliveryMapConfig, DeliveryNote } from '../type';
 import { COLORS } from '../../../constant/color';
+import { useMapProvider } from '../../../shared/hooks/useMapProvider';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -53,22 +60,21 @@ const buildMapConfig = (item: DeliveryNote): DeliveryMapConfig => {
 type Props = { item: DeliveryNote };
 
 const DeliveryMap = ({ item }: Props) => {
-  // console.log('item.driver:', item.driver);
-  // console.log('driver_lat:', item.driver?.driver_lat);
-  // console.log('driver_lng:', item.driver?.driver_lng);
+  const { provider, isReady } = useMapProvider();
   const { origin, destination, waypoints } = buildMapConfig(item);
   const isCompleted = item.status === 'completed';
   const mapRef = useRef<MapView>(null);
 
   const driverLocation: LatLng = isCompleted
     ? destination
-    : item.driver?.driver_lat && item.driver?.driver_lng
-    ? { latitude: item.driver.driver_lat, longitude: item.driver.driver_lng } // pakai posisi DB
+    : item.driver?.detail?.driver_lat && item.driver?.detail?.driver_lng
+    ? { latitude: item.driver.detail?.driver_lat, longitude: item.driver.detail?.driver_lng } // pakai posisi DB
     : origin;
 
   const trail: LatLng[] = isCompleted ? waypoints : [origin, driverLocation];
 
   useEffect(() => {
+    if (!isReady) return;
     mapRef.current?.animateToRegion(
       {
         ...driverLocation,
@@ -77,10 +83,20 @@ const DeliveryMap = ({ item }: Props) => {
       } as Region,
       600,
     );
-  }, []);
+  }, [isReady]);
+
+  if (!isReady) {
+    return (
+      <View style={[styles.map, styles.loading]}>
+        <ActivityIndicator color={COLORS.brand} />
+        <Text style={styles.loadingText}>Memuat peta...</Text>
+      </View>
+    );
+  }
 
   return (
     <MapView
+      provider={provider}
       ref={mapRef}
       style={styles.map}
       initialRegion={{
@@ -116,5 +132,15 @@ const styles = StyleSheet.create({
   map: {
     height: SCREEN_HEIGHT * 0.25,
     width: '100%',
+  },
+  loading: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+  },
+  loadingText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: COLORS.textSecondary,
   },
 });

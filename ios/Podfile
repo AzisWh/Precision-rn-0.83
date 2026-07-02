@@ -16,6 +16,10 @@ end
 
 target 'Precision' do
   config = use_native_modules!
+  # Aktifkan provider Google Maps di iOS. Subspec 'Google' menarik
+  # GoogleMaps + Google-Maps-iOS-Utils dan meng-compile source AirGoogleMaps.
+  # Tanpa ini, provider={PROVIDER_GOOGLE} tidak punya native view -> map blank.
+  pod 'react-native-maps', :path => '../node_modules/react-native-maps', :subspecs => ['Maps', 'Google']
 
   use_react_native!(
     :path => config[:reactNativePath],

@@ -2,6 +2,7 @@ import UIKit
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
+import GoogleMaps
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,6 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     reactNativeFactory = factory
 
     window = UIWindow(frame: UIScreen.main.bounds)
+
+    GMSServices.provideAPIKey(RNCConfig.env(for: "GOOGLE_MAPS_API_KEY") ?? "")
 
     factory.startReactNative(
       withModuleName: "Precision",

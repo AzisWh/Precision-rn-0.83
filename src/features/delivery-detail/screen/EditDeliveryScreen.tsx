@@ -276,7 +276,7 @@ const EditDeliveryScreen = ({ route, navigation }: Props) => {
       <LocationPickerModal
         visible={locationPicker !== null}
         title={
-          locationPicker === 'origin' ? 'Pilih Origin' : 'Pilih Destination'
+          locationPicker === 'origin' ? 'Pilih Lokasi' : 'Pilih Destination'
         }
         initial={locationPicker === 'origin' ? origin : destination}
         onClose={() => setLocationPicker(null)}
